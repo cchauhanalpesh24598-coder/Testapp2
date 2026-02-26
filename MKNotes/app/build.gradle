@@ -1,0 +1,63 @@
+apply plugin: 'com.android.application'
+
+android {
+    // AGP 7.x+ requires namespace declaration
+    namespace "com.mknotes.app"
+
+    compileSdkVersion 33
+
+    defaultConfig {
+        applicationId "com.mknotes.app"
+        minSdkVersion 26
+        targetSdkVersion 33
+        versionCode 1
+        versionName "1.0"
+
+        // Firebase + Play Services ka combined method count 65K se
+        // zyada hota hai. MultiDex zaroori hai.
+        multiDexEnabled true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lint {
+        abortOnError false
+        disable 'InvalidPackage'
+    }
+
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/NOTICE', 'META-INF/LICENSE', 'META-INF/DEPENDENCIES', 'META-INF/INDEX.LIST', 'META-INF/io.grpc.ManagedChannelProvider']
+        }
+    }
+}
+
+dependencies {
+    // ========== AndroidX Dependencies ==========
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.core:core:1.10.1'
+
+    // ========== Google Play Services (GMS Tasks API) ==========
+    // Required for com.google.android.gms.tasks.* used in CloudSyncManager/FirebaseAuthManager
+    implementation 'com.google.android.gms:play-services-tasks:18.0.2'
+
+    // ========== Firebase BOM (Bill of Materials) ==========
+    // BOM ensures all Firebase libraries use compatible versions
+    implementation platform('com.google.firebase:firebase-bom:32.2.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-firestore'
+}
+
+apply plugin: 'com.google.gms.google-services'
